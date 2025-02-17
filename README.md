@@ -1,9 +1,9 @@
-# Marinetraffic AIS toolbox
+# AIS toolbox
 
 
 ## Overview
 
- This document provides a brief overview of process, as well as the data and tools required, to generate density maps using "Marinetraffic AIS toolbox". The data used in this overview are decoded historical Automatic Identification System (AIS) data.
+ This document provides a brief overview of process, as well as the data and tools required, to generate density maps using "AIS toolbox". The data used in this overview are decoded historical Automatic Identification System (AIS) data.
  
 
 
@@ -146,7 +146,7 @@ The density map generation step reads the cleaned ais files and generates densit
 
 
 ### Filters
-The filters provided by the Marinetraffic AIS toolbox include:
+The filters provided by the AIS toolbox include:
 - Removing all messages with empty coordinates, timestamp, speed or course fields.
 - Removing points outside the area of interest (as defined from the configuration file), including points on land. 
 	- We expect a multi-polygon object representing the sea area of interest, in any of the following supported geometry file types: geopackage, geodatabase, geojson.

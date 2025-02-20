@@ -37,7 +37,7 @@
      1000
   ],
   "max_threads": 1,
-  "density_method": "time_at_cells",
+  "density_method": "positions_count",
   "density_vessel_types": ["All"],
   "min_positions_density":5
  

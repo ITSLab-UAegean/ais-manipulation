@@ -12,8 +12,8 @@
 
 We strongly recommend running this module in virtual environment to ensure packages compatibility. 
 	
-	git clone https://github.com/marinetraffic/mt-ais-toolbox.git;
-	cd mt-ais-toolbox/;
+	git clone https://github.com/SmartMoveLab/ais-toolbox.git;
+	cd ais-toolbox/;
 	python3 -m venv .venv;
 	source .venv/bin/activate;
 	pip install -e .;
@@ -31,7 +31,7 @@ To deactivate the virtual environment use:
 The package can also be installed directly from our gitub repo with the following command, however additional 
 changes in paths are required to run the following examples.
 
-	pip install git+https://github.com/marinetraffic/mt-ais-toolbox.git;
+	pip install git+https://github.com/SmartMoveLab/ais-toolbox.git;
 
 
 Check also the [configuration section below](#Configuration)
@@ -162,7 +162,7 @@ The configuration file given determines which of the above filters would be appl
 # Configuration
 
 
-The Marinetraffic AIS toolbox configuration file is a json file that consists of the parameters that control among others the input and output paths, adjust the sensitivity of the data cleaning process and control other aspects of the map generation process.   
+The toolbox configuration file is a json file that consists of the parameters that control among others the input and output paths, adjust the sensitivity of the data cleaning process and control other aspects of the map generation process.   
 
 
 | *Parameter* |	*Description*                                   | *Default Values* |

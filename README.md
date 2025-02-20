@@ -190,7 +190,7 @@ The toolbox configuration file is a json file that consists of the parameters th
 |"start/end_time"| The startin/ending times for the teimframe filter (in milliseconds) | in config (example: 1647592893000)|
 |"min_positions"|Number of minimum AIS messages for the file to be included in the cleaning process| 10|
 |"max_threads"| Maximium number of threads during execution; only for the processes that work in parallel| 4 |
-|"density_method"| Method to be used for density maps 'vessels_count'(default) or 'time_at_cells' |'vessels_count' |
+|"density_method"| Method to be used for density maps 'vessels_count'(default) or 'time_at_cells' |'vessels_count' | 'positions_count' |
 |"density_vessel_types"|List of types of vessels to be considered while creating density maps. One map will be generated for each vessel type, based on the type codes provided in the AIS. The 'All' option includes all vessels regardless their type. Options include: ['All', 'Cargo', 'Tanker', 'Dredging', 'HSC', 'Fishing', 'Military_Law', 'Passenger', 'Pleasure', 'Sailing', 'Service', 'Tug', 'Unknown', 'Other']|'All'|
 
 Directory ('colors_files_path')  with color files should include a TXT file, named 'colors_{GEL}.txt' with GEL is the each grid edge length in meters (example: 'colors_1000.txt'). Each file should include the density thresholds followed by the appropriate color, expressed as RGB and with an opacity indicator (0-255).

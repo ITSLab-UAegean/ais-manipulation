@@ -10,6 +10,22 @@ import pandas as pd
 def get_vessel_type(pos):
     """_summary_
 
+    Possible vessel types:
+        # All
+        # Cargo
+        # Dredging or Underwater ops
+        # High Speed Craft
+        # Fishing
+        # Military and Law Enforcement
+        # Passenger
+        # Pleasure Craft
+        # Sailing
+        # Service
+        # Tanker
+        # Tug and Towing
+        # Other
+        # Unknown
+
     Args:
         pos (_type_): _description_
 
@@ -50,25 +66,10 @@ def get_vessel_type(pos):
     return 'Other'
 
 
-# All
-# Cargo
-# Dredging or Underwater ops
-# High Speed Craft
-# Fishing
-# Military and Law Enforcement
-# Passenger
-# Pleasure Craft
-# Sailing
-# Service
-# Tanker
-# Tug and Towing
-# Other
-# Unknown
-
 grid = None
 gridEL = None
 
-def vessels_count_init(_config, _grid, _gridEL):
+def simple_density_init(_config, _grid, _gridEL):
     """_summary_
 
     Args:
@@ -102,3 +103,24 @@ def vessels_count(file_path):
     res = res.assign(density=1)
     return res, get_vessel_type(pos)
 
+
+
+def positions_count(file_path):
+    """_summary_
+
+    Args:
+    file_path (_type_): _description_
+
+    Returns:
+    _type_: _description_
+    """
+    pos = pd.read_csv(file_path)
+    pos['xGrid'] = pos['X'] / gridEL
+    pos['yGrid'] = pos['Y'] / gridEL
+    pos['xGrid'] = pos['xGrid'].astype(int).astype(str)
+    pos['yGrid'] = pos['yGrid'].astype(int).astype(str)
+    pos['gridID'] = pos['xGrid'] + '_' + pos['yGrid']
+    res = pos.merge(grid, on='gridID', how='inner')
+    res = res.groupby('gridID').count()[['TIMESTAMP']].rename(columns={'TIMESTAMP': 'density'})
+    
+    return res, get_vessel_type(pos)

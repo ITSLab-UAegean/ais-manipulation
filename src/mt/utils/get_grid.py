@@ -7,7 +7,7 @@ from shapely.geometry import Polygon, shape
 from shapely.validation import make_valid
 
 
-from mt.utils.outputFileUtils import check_if_path_exists, generate_dictionary_IfNotExists
+from mt.utils.output_file_utils import check_if_path_exists, generate_dictionary_IfNotExists
 from mt.utils.auxiliary import polygon_split
 
 
@@ -106,6 +106,7 @@ def load_grids(config):
             elif "bounding_box" in config:
                 gridsWithSea = gridsGDF
 
+            gridsWithSea = gridsWithSea.groupby('gridID').first().reset_index()
             gridsWithSea.to_file(dataFilePath, driver="GeoJSON")
             print("\tSaved grid in %s." % dataFilePath)
 

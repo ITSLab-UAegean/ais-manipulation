@@ -12,8 +12,8 @@
 
 We strongly recommend running this module in virtual environment to ensure packages compatibility. 
 	
-	git clone https://github.com/marinetraffic/mt-ais-toolbox.git;
-	cd mt-ais-toolbox/;
+	git clone https://github.com/SmartMoveLab/ais-toolbox.git;
+	cd ais-toolbox/;
 	python3 -m venv .venv;
 	source .venv/bin/activate;
 	pip install -e .;
@@ -31,7 +31,7 @@ To deactivate the virtual environment use:
 The package can also be installed directly from our gitub repo with the following command, however additional 
 changes in paths are required to run the following examples.
 
-	pip install git+https://github.com/marinetraffic/mt-ais-toolbox.git;
+	pip install git+https://github.com/SmartMoveLab/ais-toolbox.git;
 
 
 Check also the [configuration section below](#Configuration)
@@ -162,7 +162,7 @@ The configuration file given determines which of the above filters would be appl
 # Configuration
 
 
-The Marinetraffic AIS toolbox configuration file is a json file that consists of the parameters that control among others the input and output paths, adjust the sensitivity of the data cleaning process and control other aspects of the map generation process.   
+The toolbox configuration file is a json file that consists of the parameters that control among others the input and output paths, adjust the sensitivity of the data cleaning process and control other aspects of the map generation process.   
 
 
 | *Parameter* |	*Description*                                   | *Default Values* |
@@ -190,7 +190,7 @@ The Marinetraffic AIS toolbox configuration file is a json file that consists of
 |"start/end_time"| The startin/ending times for the teimframe filter (in milliseconds) | in config (example: 1647592893000)|
 |"min_positions"|Number of minimum AIS messages for the file to be included in the cleaning process| 10|
 |"max_threads"| Maximium number of threads during execution; only for the processes that work in parallel| 4 |
-|"density_method"| Method to be used for density maps 'vessels_count'(default) or 'time_at_cells' |'vessels_count' |
+|"density_method"| Method to be used for density maps 'vessels_count'(default) or 'time_at_cells' |'vessels_count' | 'positions_count' |
 |"density_vessel_types"|List of types of vessels to be considered while creating density maps. One map will be generated for each vessel type, based on the type codes provided in the AIS. The 'All' option includes all vessels regardless their type. Options include: ['All', 'Cargo', 'Tanker', 'Dredging', 'HSC', 'Fishing', 'Military_Law', 'Passenger', 'Pleasure', 'Sailing', 'Service', 'Tug', 'Unknown', 'Other']|'All'|
 
 Directory ('colors_files_path')  with color files should include a TXT file, named 'colors_{GEL}.txt' with GEL is the each grid edge length in meters (example: 'colors_1000.txt'). Each file should include the density thresholds followed by the appropriate color, expressed as RGB and with an opacity indicator (0-255).

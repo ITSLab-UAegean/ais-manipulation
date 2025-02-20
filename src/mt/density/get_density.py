@@ -15,8 +15,8 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
 from mt.density.time_at_cells import time_at_cells,time_at_cells_init
 from mt.utils.get_grid import load_grids
-from mt.density.density_utils import vessels_count,vessels_count_init
-from mt.utils.outputFileUtils import check_if_path_exists
+from mt.density.density_utils import vessels_count,positions_count,simple_density_init
+from mt.utils.output_file_utils import check_if_path_exists
 # from mt.density.lineCrossings import line_crossings
 
 
@@ -51,9 +51,12 @@ def get_density(config, gridEdgeLength=-1, ais_files_path=''):
     if(config['density_method']=='time_at_cells'):
         dmethod = time_at_cells
         dmethod_init = time_at_cells_init
+    elif(config['density_method']=='positions_count'):
+        dmethod = positions_count
+        dmethod_init = simple_density_init
     else:
         dmethod = vessels_count
-        dmethod_init = vessels_count_init
+        dmethod_init = simple_density_init
         config['density_method'] = "vessels_count"
 
     _outpath = config['density_path']+'density'+'_'+config['density_method']+'_'+str(gridEL)

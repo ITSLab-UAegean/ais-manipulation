@@ -212,9 +212,5 @@ results in :
 	pandas     1.4.2    BSD License 
 	pyproj     3.3.1    MIT License 
 
-
-## Acknowledgement :
- ***This work has been partially funded by the European Maritime and Fisheries Fund (EMFF) through service contract No. CINEA/EMFF/2020/3.1.16/Lot2/SI2.850940***
-
 ## License Terms 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.

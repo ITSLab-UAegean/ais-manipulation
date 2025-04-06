@@ -8,7 +8,7 @@ from shapely.validation import make_valid
 
 
 from mt.utils.output_file_utils import check_if_path_exists, generate_dictionary_IfNotExists
-from mt.utils.auxiliary import polygon_split
+from src.mt.utils.polygon_split import polygon_split
 
 
 def load_grids(config):

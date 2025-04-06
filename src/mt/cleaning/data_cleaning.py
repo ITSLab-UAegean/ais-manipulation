@@ -19,7 +19,7 @@ from shapely.strtree import STRtree
 from shapely.validation import make_valid
 
 from  mt.utils.get_grid import load_geom
-from  mt.utils.auxiliary import polygon_split
+from  src.mt.utils.polygon_split import polygon_split
 
 
 CONFIG = None

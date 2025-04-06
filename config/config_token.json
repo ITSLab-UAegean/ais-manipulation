@@ -1,0 +1,7 @@
+{
+  "ais_file_path": "/home/alex/Documents/m3/data/ais/uaegean/samples/m3_data_0_h10k.csv",
+  "output_file_path": "/home/alex/Documents/m3/data/ais/uaegean/samples/m3_data_0_h10k_token.csv",
+  "lon_column": "LONGITUDE",
+  "lat_column": "LATITUDE",
+  "h3_resolution": [3, 6, 9]
+}

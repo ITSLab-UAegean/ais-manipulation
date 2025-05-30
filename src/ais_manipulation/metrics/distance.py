@@ -1,4 +1,4 @@
-from haversine import haversine, Unit
+from haversine import haversine
 
 def distance(lon1, lat1, lon2, lat2, unit='km'):
     return haversine((lat1, lon1), (lat2, lon2), unit=unit) 

@@ -18,8 +18,8 @@ from shapely.ops import transform
 from shapely.strtree import STRtree
 from shapely.validation import make_valid
 
-from  mt.utils.get_grid import load_geom
-from  src.mt.utils.polygon_split import polygon_split
+from  ais_manipulation.geospatial.get_grid import load_geom
+from  src.ais_manipulation.geospatial.polygon_split import polygon_split
 
 
 CONFIG = None

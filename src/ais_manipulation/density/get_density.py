@@ -13,10 +13,10 @@ import json
 
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
-from mt.density.time_at_cells import time_at_cells,time_at_cells_init
-from mt.utils.get_grid import load_grids
-from mt.density.density_utils import vessels_count,positions_count,simple_density_init
-from mt.utils.output_file_utils import check_if_path_exists
+from ais_manipulation.density.time_at_cells import time_at_cells,time_at_cells_init
+from ais_manipulation.geospatial.get_grid import load_grids
+from ais_manipulation.density.density_utils import vessels_count,positions_count,simple_density_init
+from src.ais_manipulation.file_management.output_file_utils import check_if_path_exists
 # from mt.density.lineCrossings import line_crossings
 
 

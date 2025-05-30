@@ -9,7 +9,7 @@ import os
 import subprocess
 from pathlib import Path
 
-from mt.density.get_density import get_density
+from ais_manipulation.density.get_density import get_density
 
 class RasterConverter:
     """Class that wraps GDAL functionality to convert to csv to raster files for the EU region in 3035 projection system.

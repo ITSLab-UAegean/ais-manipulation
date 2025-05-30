@@ -5,7 +5,7 @@ import pandas as pd
 import geopandas as gpd
 from haversine import haversine
 from shapely.geometry import Point, LineString
-from mt.density.density_utils import get_vessel_type
+from ais_manipulation.density.density_utils import get_vessel_type
 
 grid = None
 gridEL = None

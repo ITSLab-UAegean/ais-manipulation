@@ -117,8 +117,7 @@ The density map generation step reads the cleaned ais files and generates densit
 
 
 
-<img src="./docs/figures/grid_1000.png" alt="Grid of 1km side, partitioning the area of interest (Syros)." width="360"/>
-<img src="./docs/figures/grid_500.png" alt="Grid of 0.5km side, partitioning the area of interest (Syros)." width="360"/>
+<img src="./docs/figures/grids.png" alt="Grids of 1km and 0.5km sides, partitioning the area of interest (Syros)." width="800"/>
 
 *Two grids of selected side lengths (1000 and 500 meters); smaller grid sizes result in more precise results but take more time in execution.*
 

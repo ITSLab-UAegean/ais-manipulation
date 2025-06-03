@@ -1,7 +1,10 @@
-"""TODO summary
+"""
 
-Returns:
-    _type_: _description_
+Calculates the density based on directory of AIS tracks (split by the vessel identifier -- MMSI).
+The module creates a plethora of parallel processes and the tracks for each vessel is passed to an available process. 
+There are a lot of different density measurements to be selected. 
+Additionally, different maps for each specific vessel type can be produced.
+
 """
 import sys
 import logging
@@ -13,18 +16,17 @@ import json
 
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
-from ais_manipulation.density.time_at_cells import time_at_cells,time_at_cells_init
+from src.ais_manipulation.density.time_density import time_spent_density,time_spent_density_init
 from ais_manipulation.geospatial.get_grid import load_grids
-from ais_manipulation.density.density_utils import vessels_count,positions_count,simple_density_init
+from src.ais_manipulation.density.count_density import vessels_count,positions_count,simple_density_init
 from src.ais_manipulation.file_management.output_file_utils import check_if_path_exists
-# from mt.density.lineCrossings import line_crossings
 
 
 
 def get_density(config, gridEdgeLength=-1, ais_files_path=''):
     """
             This function loads configuration extracts csv file with respect to 
-            the selected density method ('time_at_cells' or 'vessels_count')
+            the selected density method ('time_spent', 'distance_covered', 'vessels_count', 'positions_count')
     """
     
 
@@ -48,9 +50,9 @@ def get_density(config, gridEdgeLength=-1, ais_files_path=''):
                 resTypes.append(type)
 
     maxThreads = config.get('max_threads', 4)
-    if(config['density_method']=='time_at_cells'):
-        dmethod = time_at_cells
-        dmethod_init = time_at_cells_init
+    if(config['density_method']=='time_spent'):
+        dmethod = time_spent_density
+        dmethod_init = time_spent_density_init
     elif(config['density_method']=='positions_count'):
         dmethod = positions_count
         dmethod_init = simple_density_init

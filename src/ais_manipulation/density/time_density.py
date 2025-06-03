@@ -5,13 +5,13 @@ import pandas as pd
 import geopandas as gpd
 from haversine import haversine
 from shapely.geometry import Point, LineString
-from ais_manipulation.density.density_utils import get_vessel_type
+from ais_manipulation.density.vessel_type import get_vessel_type
 
 grid = None
 gridEL = None
 outCRS = None
 
-def time_at_cells_init(_config, _grid, _gridEL):
+def time_spent_density_init(_config, _grid, _gridEL):
     global outCRS
     global grid
     global gridEL
@@ -20,7 +20,7 @@ def time_at_cells_init(_config, _grid, _gridEL):
     gridEL = _gridEL
 
 
-def havdist(row):
+def haversineDist(row):
     """
         help function to calculate the haversine distance
     """
@@ -31,7 +31,7 @@ def havdist(row):
 
 
 
-def eucl(row):
+def eucliadianDist(row):
     """
         help function to calculate the euclidean distance
     """
@@ -40,7 +40,7 @@ def eucl(row):
     return dist((row.X, row.Y), (row.lag_X, row.lag_Y))
 
 
-def time_at_cells(file_path):
+def time_spent_density(file_path):
     """help function to calculate time 
 
     Args:
@@ -70,7 +70,7 @@ def time_at_cells(file_path):
     # Adding extra columns to pos data
     pos['dt'] = pos['TIMESTAMP'] - pos['lag_t']
     # Selecting transitions to be considered
-    pos['ddist'] = pos.apply(lambda row: eucl(row), axis=1) #meters
+    pos['ddist'] = pos.apply(lambda row: eucliadianDist(row), axis=1) #meters
     pos['calc_speed'] = pos.apply(lambda row: row['ddist']/row['dt'] if (row['dt']>0.0) else 1000.0,axis=1) #meters/milliseconds
     pos=pos[(pos.ddist<=30000) & (pos.dt<=(6*60*60*1000)) & (pos.calc_speed<=0.0257222) ]
 
@@ -97,13 +97,13 @@ def time_at_cells(file_path):
     timesAtGridNoChange = posGridNoChange.groupby(['gridID'])['dt'].sum().rename('dtGridNoChange').to_frame().reset_index()
     
 
-    # Computing times at cells
+    # Computing times spent at cells
     if(len(posGridChange)!=0):
-        timesAtCells = pd.merge(timesAtGridNoChange, timesAtGridChange, how = 'outer', left_on = ['gridID'], right_on = ['gridID'])
+        timesSpent = pd.merge(timesAtGridNoChange, timesAtGridChange, how = 'outer', left_on = ['gridID'], right_on = ['gridID'])
     else:
-        timesAtCells = timesAtGridNoChange
-        timesAtCells['dtGridChange'] = 0
-    timesAtCells['density'] = timesAtCells[['dtGridNoChange','dtGridChange']].sum(axis=1) / (3600*1000)
-    timesAtCells.set_index('gridID', inplace=True)
-    timesAtCells.rename_axis(None, axis=0, inplace=True)
-    return timesAtCells[['density']], get_vessel_type(pos)
+        timesSpent = timesAtGridNoChange
+        timesSpent['dtGridChange'] = 0
+    timesSpent['density'] = timesSpent[['dtGridNoChange','dtGridChange']].sum(axis=1) / (3600*1000)
+    timesSpent.set_index('gridID', inplace=True)
+    timesSpent.rename_axis(None, axis=0, inplace=True)
+    return timesSpent[['density']], get_vessel_type(pos)

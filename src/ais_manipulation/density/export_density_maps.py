@@ -105,10 +105,7 @@ if __name__ == "__main__":
     
     config_file = open(sys.argv[1], "r",encoding='utf-8')
     config = json.load(config_file)
-    print("Alex alex")
 
-
-    #print("Creating density maps for " + out_name)
     t_0 = time.time()
     export_denity_map(config, "")
     print(time.time() - t_0)

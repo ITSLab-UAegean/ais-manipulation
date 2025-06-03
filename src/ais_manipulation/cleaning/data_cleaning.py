@@ -13,7 +13,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import pyproj
 import pandas as pd
 from haversine import haversine
-from shapely.geometry import Point, shape
+from shapely.geometry import Point, shape, Polygon, MultiPolygon
 from shapely.ops import transform
 from shapely.strtree import STRtree
 from shapely.validation import make_valid
@@ -70,10 +70,8 @@ def clean_mmsi(mmsi):
                                 r_spd : removed due to noise filtering
                                 r_tf : removed due to imposed timeframe
     """
-    # HEADER: TIMESTAMP,MMSI,LON,LAT,HEADING,COURSE,SPEED,NAVIGATIONAL_STATUS,TYPE,STATION,CLASS
-    TS, MMSI, LON, LAT, HEAD, COG, SOG, NAVS, TYPE, STATION, CLASS = (0,1,2,3,4,5,6,7,8,9,10)
-    
-    del HEAD,NAVS,TYPE,STATION,CLASS # removing unused variables
+    # HEADER: TIMESTAMP,MMSI,LON,LAT,HEADING,COURSE,SPEED,TYPE
+    TS, MMSI, LON, LAT, HEAD, COG, SOG, TYPE = (0,1,2,3,4,5,6,7)
     
     # COUNTERS
     rows = 0  # total input rows
@@ -97,7 +95,7 @@ def clean_mmsi(mmsi):
     cleaned_output_path = os.path.join(CONFIG["ais_cleaned_path"], str(mmsi) + "_clean.csv")
     with open(cleaned_output_path, "w",encoding="utf-8") as out_file:
         out_file.write(
-            "TIMESTAMP,MMSI,LON,LAT,X,Y,HEADING,COURSE,SPEED,NAVIGATIONAL_STATUS,TYPE,STATION,CLASS\n"
+            "TIMESTAMP,MMSI,LON,LAT,X,Y,HEADING,COURSE,SPEED,TYPE\n"
         )
 
         pt = 0
@@ -182,8 +180,11 @@ def clean_mmsi(mmsi):
                 rows_out += 1
                 fst_flag = True
                 out_file.write(
-                    f"{row[0]},{row[1]},{row[2]},{row[3]},{projected.x},{projected.y},{row[4]},{row[5]},{row[6]},{row[7]},{row[8]},{row[9]},{row[10]}\n"
+                    f"{row[TS]},{row[MMSI]},{row[LON]},{row[LAT]},{projected.x},{projected.y},{row[HEAD]},{row[COG]},{row[SOG]},{row[TYPE]}\n"
                 )
+                # output "TIMESTAMP,MMSI,LON,LAT,X,Y,HEADING,COURSE,SPEED,TYPE\n"
+                #   HEADER: TIMESTAMP,MMSI,LON,LAT,HEADING,COURSE,SPEED,TYPE
+                #   TS, MMSI, LON, LAT, HEAD, COG, SOG, TYPE = (0,1,2,3,4,5,6,7)
 
     if(rows_out==0):
         os.remove(cleaned_output_path)
@@ -236,11 +237,22 @@ def clean_data(_config, _seas_tree=[], grid_edge_length=-1):
             seas = load_geom(_config, out_crs=out_crs)
             logging.warning("\tLoaded geometries for land mask.")
             for _, sea in seas.iterrows():
-                polygons = shape(sea["geometry"])
-                for _polygon in polygons.geoms:
-                    seas_list += polygon_split(
-                        make_valid(_polygon), threshold=grid_edge_length
-                    )
+                shapely_geo_obj = shape(sea["geometry"])
+                if isinstance(shapely_geo_obj, Polygon):
+                    # If it's a simple Polygon, process it directly
+                    # logging.info(f"Processing Polygon from row {idx}: {sea_row['name']}")
+                    processed_polygons = polygon_split(make_valid(shapely_geo_obj), threshold=grid_edge_length)
+                    seas_list.extend(processed_polygons) # Use extend to add all polygons from the split result
+                elif isinstance(shapely_geo_obj, MultiPolygon):
+                    # If it's a MultiPolygon, iterate through its individual Polygon components
+                    # logging.info(f"Processing MultiPolygon from row {idx}: {sea_row['name']}")
+                    for _polygon in shapely_geo_obj.geoms:
+                        processed_polygons = polygon_split(make_valid(_polygon), threshold=grid_edge_length)
+                        seas_list.extend(processed_polygons)
+                # else:
+                #     # Handle other geometry types if they might appear and you want to ignore/log them
+                #     logging.warning(f"Unsupported geometry type encountered: {shapely_geo_obj.geom_type} in row {idx}. Skipping.")
+
         _seas_tree = STRtree(seas_list)
         logging.warning("\tLoaded land mask.\n")
 

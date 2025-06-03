@@ -17,7 +17,6 @@ We strongly recommend running this module in virtual environment to ensure packa
 	python3 -m venv .venv;
 	source .venv/bin/activate;
 	pip install -e .;
-	export USE_PYGEOS=1;
 
 
 Package installation in the virtual environment
@@ -83,24 +82,12 @@ For the loading of the AIS messages compressed comma-separated values files shou
 
 
 
-### Binding AIS positional reports with static reports (Merging)
-  Merge decoded data: AIS messages (static and positional) would be merged so that each positional message includes additional information originating from the corresponding static AIS messages.
-  The merging process can be executed by:
- 
-	python -m mt.cleaning.ais_merge config/config.json 
-
 
 
 ### Input format
+The input messages are AIS positional reports (also including the vessel type):
 
-In case the message is static report:
-
-	t,station,channel_code,mmsi,type,data_type,imo;shiptype;to_bow;to_stern;to_port;to_starboard;callsign;shipname;draught;destination;eta_month;eta_day;eta_hour;eta_minute
-
-
-In case the message is a positional report:
-
-	t,station,channel_code,mmsi,type,data_type,lon;lat;heading;course;speed;rot_direction;rot;navigation_status
+	t,mmsi,lon,lat,heading,course,speed,type
 
 
 <img src="./docs/figures/raw_data.png" alt="Raw Dataset example" width="800"/>

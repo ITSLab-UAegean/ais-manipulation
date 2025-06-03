@@ -1,0 +1,15 @@
+{
+  "grids_path": "data/testing/others/",
+  "geometry_file_path": "data/testing/others/syros.json",
+  "ais_cleaned_path": "data/testing/02_cleaned/",
+  "density_path": "data/testing/03_density/",
+  "colors_files_path": "config/colormaps/",
+  "ais_stats_path": "data/testing/metadata/",
+  "grid_edge_lengths": [
+     1000, 500
+  ],
+  "max_threads": 14,
+  "density_method": "positions_count",
+  "density_vessel_types": ["Everything"],
+  "min_positions_density":5
+}

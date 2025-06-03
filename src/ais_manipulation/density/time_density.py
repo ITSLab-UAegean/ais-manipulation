@@ -71,8 +71,8 @@ def time_spent_density(file_path):
     pos['dt'] = pos['TIMESTAMP'] - pos['lag_t']
     # Selecting transitions to be considered
     pos['ddist'] = pos.apply(lambda row: eucliadianDist(row), axis=1) #meters
-    pos['calc_speed'] = pos.apply(lambda row: row['ddist']/row['dt'] if (row['dt']>0.0) else 1000.0,axis=1) #meters/milliseconds
-    pos=pos[(pos.ddist<=30000) & (pos.dt<=(6*60*60*1000)) & (pos.calc_speed<=0.0257222) ]
+    pos['calc_speed'] = pos.apply(lambda row: row['ddist']/row['dt'] if (row['dt']>0.0) else 1000.0,axis=1) #meters/seconds
+    pos=pos[(pos.ddist<=30000) & (pos.dt<=(2*60*60)) & (pos.calc_speed<=0.0257222) ]
 
     posGridChange = copy.deepcopy(pos[pos.gridID != pos.lag_gridID])
     posGridChange['pos_id'] = posGridChange.index
@@ -103,7 +103,7 @@ def time_spent_density(file_path):
     else:
         timesSpent = timesAtGridNoChange
         timesSpent['dtGridChange'] = 0
-    timesSpent['density'] = timesSpent[['dtGridNoChange','dtGridChange']].sum(axis=1) / (3600*1000)
+    timesSpent['density'] = timesSpent[['dtGridNoChange','dtGridChange']].sum(axis=1) / (3600)
     timesSpent.set_index('gridID', inplace=True)
     timesSpent.rename_axis(None, axis=0, inplace=True)
     return timesSpent[['density']], get_vessel_type_dataframe(pos)

@@ -91,46 +91,41 @@ The input messages are AIS positional reports (also including the vessel type):
 
 TIMESTAMP is expressed in as an EPOCH (in seconds), LON and LAT are the coordinates according to EPSG:4326, and TYPE is the vessel type number according to AIS.
 
-<img src="./docs/figures/raw_data.png" alt="Raw Dataset example" width="800"/>
+<img src="./docs/figures/raw_data.png" alt="Raw AIS dataset of multiple vessels" width="800"/>
 
 *Sample dataset based on real vessel movement around the island of Syros, in Greece. The positions are collored according to the reported MMSI of the messages.*
 
 
 
 
-## Cleaning erroneous or incomplete messages (Cleaning)
-Clean merged data: after merging all AIS messages should go through the filters indicated in the config file. These may include: checking validity of movement fields, validity of vessel ID (MMSI), the land mask and others (see **Filters** section below). Input and output directories and the filters to be applied are defined on the configuration file given. 
-The cleaning process can be executed by:
-
+## Data selection and cleaning
+AIS data should be preprocessed before any significant analysis. Erroneous or incomplete messages should be removed, while spatial and temporal filters allow for more precise data selection. Finally a downsampling mechanism allows for temporal downsampling in order to redue the size of unnecessary large datasets.
+The following command will clean the data in an effective way (in parallel), according to the filters selected in the configuration file, while also producing a statistics report of the process:
 	
 	python -m src.ais_manipulation.cleaning.data_cleaning config/config_cleaning.json 
 
-<img src="./docs/figures/downsampled_data.png" alt="Cleaned and Downsampled dataset" width="800"/>
+<img src="./docs/figures/downsampled_data.png" alt="Cleaned, filtered downsampled data for a single vessel" width="800"/>
 
 *Clean dataset (green) for a single vessel of the input sample. The pink messages are filtered out, while the messages in light blue are kept. In purple you can see the area of interest (greater Syros area) as given to the module; the respective geometry can be found in the 'data/others' folder.*
 
 
-## Density maps generation
+## Creating different density maps
 The density map generation step reads the cleaned ais files and generates density maps with respect to the selected method in the configuration file. There are two options available, the first one measures the number of vessels within each cell while the second one aggregates the time spent within each cell of all vessels crossing it. 
 
 	
-	python -m mt.density.export_density_maps config/config.json 
+	python -m src.ais_manipulation.density.export_density_maps config/config_density.json 
 
 
 
-<img src="./docs/figures/data_multiple_vessels.png" alt="1km side grid used to calculate density maps" width="800"/>
+<img src="./docs/figures/grid_1000.png" alt="Grid of 1km side, partitioning the area of interest (Syros)." width="360"/>
+<img src="./docs/figures/grid_500.png" alt="Grid of 0.5km side, partitioning the area of interest (Syros)." width="360"/>
 
-*1km side grid used to calculate density maps. Cleaned positions of three vessels*
-
-
-<img src="./docs/figures/rasterize.png" alt="The rasterization process" width="800"/>
-
-*The rasterization process.*
+*Two grids of selected side lengths (1000 and 500 meters); smaller grid sizes result in more precise results but take more time in execution.*
 
 
-<img src="./docs/figures/raster_map.png" alt="The resulting map of total vessel in geo-referenced tiff format" width="800"/>
+<img src="./docs/figures/density_combined_500.png" alt="Density maps for all, tanker and pleasure vessels." width="800"/>
 
-*The resulting map of time_at_cells method in geo-referenced tiff format and colormap as provided in configuration.*
+*Density maps for the area of interest, for all, tanker and pleasure vessels respectively. The number of positions were used for this calculation.*
 
 
 ### Filters

@@ -103,7 +103,6 @@ def clean_mmsi(mmsi):
         fst_flag = False
         with open(os.path.join(CONFIG["ais_path"] ,mmsi + ".csv"), "r",encoding="utf-8") as in_file:
 
-            # print('\tReading input file (%s).'%(mmsi+'.csv'))
             next(in_file)
             for line in in_file:
 
@@ -138,12 +137,7 @@ def clean_mmsi(mmsi):
                     if (row[MMSI] in false_mmsi) or (len(row[MMSI]) != 9):
                         r_iid += 1
                         continue
-
-
-                # if config['remove_special_characters']:
-                #     # Remove special characters from name and call sing.
-                #     row[NAME] = re.sub('[^A-Za-z0-9 ]+', '', row[NAME])
-                #     row[CALLS] = re.sub('[^A-Za-z0-9 ]+', '', row[CALLS])
+                    
                 
                 ts = int(row[TS])
 
@@ -162,13 +156,12 @@ def clean_mmsi(mmsi):
                 if CONFIG["noise_filter"]:
                     if fst_flag:
                         ddist = haversine((clat, clon), (plat, plon), unit="km")
-                        cspeed = (ddist * 60.0 * 60.0 * 1000.0) / (ts - pt)
+                        cspeed = (ddist * 60.0 * 60.0) / (ts - pt)
                         if cspeed > max_sp:
                             r_spd += 1
                             continue
 
                 projected = transform(PROJECT, Point(clon, clat))
-                # grid_edge_length: default->10, if different get by user
                 if CONFIG["land_mask"]:
                     if (len(SEAS_RTREE.query(projected, predicate='intersects'))== 0):
                         r_geo += 1
@@ -182,9 +175,6 @@ def clean_mmsi(mmsi):
                 out_file.write(
                     f"{row[TS]},{row[MMSI]},{row[LON]},{row[LAT]},{projected.x},{projected.y},{row[HEAD]},{row[COG]},{row[SOG]},{row[TYPE]}\n"
                 )
-                # output "TIMESTAMP,MMSI,LON,LAT,X,Y,HEADING,COURSE,SPEED,TYPE\n"
-                #   HEADER: TIMESTAMP,MMSI,LON,LAT,HEADING,COURSE,SPEED,TYPE
-                #   TS, MMSI, LON, LAT, HEAD, COG, SOG, TYPE = (0,1,2,3,4,5,6,7)
 
     if(rows_out==0):
         os.remove(cleaned_output_path)
@@ -239,19 +229,12 @@ def clean_data(_config, _seas_tree=[], grid_edge_length=-1):
             for _, sea in seas.iterrows():
                 shapely_geo_obj = shape(sea["geometry"])
                 if isinstance(shapely_geo_obj, Polygon):
-                    # If it's a simple Polygon, process it directly
-                    # logging.info(f"Processing Polygon from row {idx}: {sea_row['name']}")
                     processed_polygons = polygon_split(make_valid(shapely_geo_obj), threshold=grid_edge_length)
-                    seas_list.extend(processed_polygons) # Use extend to add all polygons from the split result
+                    seas_list.extend(processed_polygons)
                 elif isinstance(shapely_geo_obj, MultiPolygon):
-                    # If it's a MultiPolygon, iterate through its individual Polygon components
-                    # logging.info(f"Processing MultiPolygon from row {idx}: {sea_row['name']}")
                     for _polygon in shapely_geo_obj.geoms:
                         processed_polygons = polygon_split(make_valid(_polygon), threshold=grid_edge_length)
                         seas_list.extend(processed_polygons)
-                # else:
-                #     # Handle other geometry types if they might appear and you want to ignore/log them
-                #     logging.warning(f"Unsupported geometry type encountered: {shapely_geo_obj.geom_type} in row {idx}. Skipping.")
 
         _seas_tree = STRtree(seas_list)
         logging.warning("\tLoaded land mask.\n")

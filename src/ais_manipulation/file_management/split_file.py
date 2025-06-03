@@ -15,7 +15,7 @@ def split_file(_config):
     count = 0
     print(f"\tSpliting AIS files at {ais_file_path}.")
     for id in df[id_column].unique():
-        df[df[id_column]==id].to_csv(f"{output_path}{id}_positions.csv", index=False)
+        df[df[id_column]==id].to_csv(f"{output_path}{id}.csv", index=False)
         count += 1
     print(f"\tCreated {count} different files of AIS tracks at {output_path}.")
 

@@ -1,0 +1,36 @@
+{
+  "geometry_file_path": "data/testing/others/syros.json",
+  "ais_path": "data/testing/01_split/",
+  "ais_cleaned_path": "data/testing/02_cleaned/",
+  "ais_stats_path": "data/testing/metadata/",
+  "recompute_preprocessed_data": false, 
+  "empty_fields": true,
+  "invalid_movement_fields": true,
+  "invalid_mmsi": true,
+  "remove_special_characters": true,
+  "land_mask": true,
+  "downsample": true,
+  "noise_filter": true,
+  "timeframe": false,
+  "min_positions": 10,
+  "downsample_rate": 60,
+  "false_mmsi": [
+    "000000000",
+    "111111111",
+    "222222222",
+    "333333333",
+    "444444444",
+    "555555555",
+    "666666666",
+    "777777777",
+    "888888888",
+    "999999999",
+    "123456789",
+    "0.12345",
+    "1193046"
+  ],
+  "grid_edge_lengths": [
+     1000
+  ],
+  "max_threads": 4 
+}

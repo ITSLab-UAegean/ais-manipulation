@@ -75,24 +75,25 @@ Each step of our approach requires some parameters that include: paths for input
 
 
 # The process
-## Loading and merging data
+## Loading and splitting the AIS trajectory data
 
 
-For the loading of the AIS messages compressed comma-separated values files should be included (format .csv.bz2). These files should have the messages ordered by their timestamps. In case there are multiple input files they must be ordered alphabetically so that files with earlier messages come first.
+As a first step, the input AIS file should be split, according to the MMSI; meaning that each resulting file would have alll positions from a single vessel. The input thus for this step is a comma-separated values file. For this step, a small configuration file should be created, including only the original file path and the directory where the multiple files will be dumped on.
 
-
+python -m src.ais_manipulation.file_management.split_file config/config_split.json
 
 
 
 ### Input format
 The input messages are AIS positional reports (also including the vessel type):
 
-	t,mmsi,lon,lat,heading,course,speed,type
+	TIMESTAMP,MMSI,LON,LAT,HEADING,COURSE,SPEED,TYPE
 
+TIMESTAMP is expressed in as an EPOCH (in seconds), LON and LAT are the coordinates according to EPSG:4326, and TYPE is the vessel type number according to AIS.
 
 <img src="./docs/figures/raw_data.png" alt="Raw Dataset example" width="800"/>
 
-*Original sample dataset for a single vessel.*
+*Sample dataset based on real vessel movement around the island of Syros, in Greece. The positions are collored according to the reported MMSI of the messages.*
 
 
 
@@ -102,11 +103,11 @@ Clean merged data: after merging all AIS messages should go through the filters 
 The cleaning process can be executed by:
 
 	
-	python -m mt.cleaning.data_cleaning config/config.json 
+	python -m src.ais_manipulation.cleaning.data_cleaning config/config_cleaning.json 
 
 <img src="./docs/figures/downsampled_data.png" alt="Cleaned and Downsampled dataset" width="800"/>
 
-*Clean dataset (green) for the same vessel. The red messages are filtered out.*
+*Clean dataset (green) for a single vessel of the input sample. The pink messages are filtered out, while the messages in light blue are kept. In purple you can see the area of interest (greater Syros area) as given to the module; the respective geometry can be found in the 'data/others' folder.*
 
 
 ## Density maps generation

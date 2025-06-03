@@ -3,9 +3,17 @@
 Functions related to projecting vessel type name.
 
 """
+from math import isnan
 
+def get_vessel_type_dataframe(pos):
+    n = -1
+    for i in pos.TYPE.unique():
+        if(not isnan(i)):
+            n = i
+            break
+    return get_vessel_type(n)
 
-def get_vessel_type(pos):
+def get_vessel_type(n):
     """_summary_
 
     Possible vessel types:
@@ -31,11 +39,7 @@ def get_vessel_type(pos):
         _type_: _description_
     """
 
-    n=-1
-    for i in pos.TYPE.unique():
-        if(not isnan(i)):
-            n = i
-            break
+
     if(n>69 and n<80):
         return 'Cargo'
     if(n>79 and n<90):

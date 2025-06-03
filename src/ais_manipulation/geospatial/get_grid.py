@@ -90,10 +90,19 @@ def load_grids(config):
                     seas_list = []
                     for _, sea in gdf.iterrows():
                         polygons = shape(sea["geometry"])
-                        for _polygon in polygons.geoms:
-                            seas_list += polygon_split(
-                                make_valid(_polygon), threshold=splitThres
-                            )
+                                
+                        shapely_geo_obj = shape(sea["geometry"])
+                        if isinstance(shapely_geo_obj, Polygon):
+                            # If it's a simple Polygon, process it directly
+                            # logging.info(f"Processing Polygon from row {idx}: {sea_row['name']}")
+                            seas_list = [make_valid(shapely_geo_obj)]
+                        elif isinstance(shapely_geo_obj, MultiPolygon):
+                            # If it's a MultiPolygon, iterate through its individual Polygon components
+                            # logging.info(f"Processing MultiPolygon from row {idx}: {sea_row['name']}")
+                            for _polygon in shapely_geo_obj.geoms:
+                                seas_list += polygon_split(
+                                    make_valid(_polygon), threshold=splitThres
+                                )
                     seas_gdf = gpd.GeoDataFrame(
                         seas_list, columns=["geometry"]
                     ).set_crs(out_crs, inplace=True)

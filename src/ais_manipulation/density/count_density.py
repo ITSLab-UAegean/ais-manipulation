@@ -4,9 +4,8 @@ Returns:
     _type_: _description_
 """
 import copy
-from math import isnan
 import pandas as pd
-from ais_manipulation.density.vessel_type import get_vessel_type
+from ais_manipulation.density.vessel_type import get_vessel_type_dataframe
 
 
 grid = None
@@ -44,7 +43,7 @@ def vessels_count(file_path):
     cellsVisited = pos['gridID'].unique()
     res= grid.loc[grid.index.intersection(cellsVisited)]
     res = res.assign(density=1)
-    return res, get_vessel_type(pos)
+    return res, get_vessel_type_dataframe(pos)
 
 
 
@@ -66,4 +65,4 @@ def positions_count(file_path):
     res = pos.merge(grid, on='gridID', how='inner')
     res = res.groupby('gridID').count()[['TIMESTAMP']].rename(columns={'TIMESTAMP': 'density'})
     
-    return res, get_vessel_type(pos)
+    return res, get_vessel_type_dataframe(pos)

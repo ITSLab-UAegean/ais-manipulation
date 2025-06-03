@@ -5,7 +5,7 @@ import pandas as pd
 import geopandas as gpd
 from haversine import haversine
 from shapely.geometry import Point, LineString
-from ais_manipulation.density.vessel_type import get_vessel_type
+from ais_manipulation.density.vessel_type import get_vessel_type_dataframe
 
 grid = None
 gridEL = None
@@ -106,4 +106,4 @@ def time_spent_density(file_path):
     timesSpent['density'] = timesSpent[['dtGridNoChange','dtGridChange']].sum(axis=1) / (3600*1000)
     timesSpent.set_index('gridID', inplace=True)
     timesSpent.rename_axis(None, axis=0, inplace=True)
-    return timesSpent[['density']], get_vessel_type(pos)
+    return timesSpent[['density']], get_vessel_type_dataframe(pos)

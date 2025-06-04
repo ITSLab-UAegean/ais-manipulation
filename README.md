@@ -198,9 +198,9 @@ results in :
 	pandas     1.4.2    BSD License 
 	pyproj     3.3.1    MIT License 
 
-
 ## Acknowledgement :
  ***This work has been supported by the "Athena" Research Center, as part of the project MIS 5154714 of the National Recovery and Resilience Plan Greece 2.0 funded by the European Union under the NextGenerationEU Program.***
+
 
 ## License Terms 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.

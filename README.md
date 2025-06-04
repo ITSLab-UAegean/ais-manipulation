@@ -1,4 +1,11 @@
-# AIS toolbox
+# AIS Manipulation Toolbox 
+
+The provided repository is a Python toolbox, designed to manage, process and create effective vizualizations of vessel trajectories, as depicted in Automatic Identification Systems data. The toolbox comes with a series of functionalities to filter erroneous data, create precise selections and transform the trajectories. Additionally, processes like the extraction of specific (stop-to-stop) trips in the data and a tokenization methodology are provided. Finally, several density measures are included in the module, in order to create traffic visualizations best-fit for each use case. The toolbox is created in order to be easily extended and configuralbe according to the user-defined thresholds and methods.
+
+
+This project takes advantage of the previously published open-source [toolbox by MarineTraffic](https://github.com/marinetraffic/mt-ais-toolbox), extending its capabilities and adding components towards the modelling of vessel traffic.
+
+
 
 
 ## Overview
@@ -17,7 +24,6 @@ We strongly recommend running this module in virtual environment to ensure packa
 	python3 -m venv .venv;
 	source .venv/bin/activate;
 	pip install -e .;
-	export USE_PYGEOS=1;
 
 
 Package installation in the virtual environment
@@ -36,9 +42,6 @@ changes in paths are required to run the following examples.
 
 Check also the [configuration section below](#Configuration)
 
-Note: it is recommended to set the following system variable to speed up pygeos spatial joins:
-
-	export USE_PYGEOS=1
 
 ### Installation on Windows OS
 
@@ -76,73 +79,56 @@ Each step of our approach requires some parameters that include: paths for input
 
 
 # The process
-## Loading and merging data
+## Loading and splitting the AIS trajectory data
 
 
-For the loading of the AIS messages compressed comma-separated values files should be included (format .csv.bz2). These files should have the messages ordered by their timestamps. In case there are multiple input files they must be ordered alphabetically so that files with earlier messages come first.
+As a first step, the input AIS file should be split, according to the MMSI; meaning that each resulting file would have alll positions from a single vessel. The input thus for this step is a comma-separated values file. For this step, a small configuration file should be created, including only the original file path and the directory where the multiple files will be dumped on.
 
-
-
-### Binding AIS positional reports with static reports (Merging)
-  Merge decoded data: AIS messages (static and positional) would be merged so that each positional message includes additional information originating from the corresponding static AIS messages.
-  The merging process can be executed by:
- 
-	python -m mt.cleaning.ais_merge config/config.json 
+python -m src.ais_manipulation.file_management.split_file config/config_split.json
 
 
 
 ### Input format
+The input messages are AIS positional reports (also including the vessel type):
 
-In case the message is static report:
+	TIMESTAMP,MMSI,LON,LAT,HEADING,COURSE,SPEED,TYPE
 
-	t,station,channel_code,mmsi,type,data_type,imo;shiptype;to_bow;to_stern;to_port;to_starboard;callsign;shipname;draught;destination;eta_month;eta_day;eta_hour;eta_minute
+TIMESTAMP is expressed in as an EPOCH (in seconds), LON and LAT are the coordinates according to EPSG:4326, and TYPE is the vessel type number according to AIS.
 
+<img src="./docs/figures/raw_data.png" alt="Raw AIS dataset of multiple vessels" width="800"/>
 
-In case the message is a positional report:
-
-	t,station,channel_code,mmsi,type,data_type,lon;lat;heading;course;speed;rot_direction;rot;navigation_status
-
-
-<img src="./docs/figures/raw_data.png" alt="Raw Dataset example" width="800"/>
-
-*Original sample dataset for a single vessel.*
+*Sample dataset based on real vessel movement around the island of Syros, in Greece. The positions are collored according to the reported MMSI of the messages.*
 
 
 
 
-## Cleaning erroneous or incomplete messages (Cleaning)
-Clean merged data: after merging all AIS messages should go through the filters indicated in the config file. These may include: checking validity of movement fields, validity of vessel ID (MMSI), the land mask and others (see **Filters** section below). Input and output directories and the filters to be applied are defined on the configuration file given. 
-The cleaning process can be executed by:
-
+## Data selection and cleaning
+AIS data should be preprocessed before any significant analysis. Erroneous or incomplete messages should be removed, while spatial and temporal filters allow for more precise data selection. Finally a downsampling mechanism allows for temporal downsampling in order to redue the size of unnecessary large datasets.
+The following command will clean the data in an effective way (in parallel), according to the filters selected in the configuration file, while also producing a statistics report of the process:
 	
-	python -m mt.cleaning.data_cleaning config/config.json 
+	python -m src.ais_manipulation.cleaning.data_cleaning config/config_cleaning.json 
 
-<img src="./docs/figures/downsampled_data.png" alt="Cleaned and Downsampled dataset" width="800"/>
+<img src="./docs/figures/downsampled_data.png" alt="Cleaned, filtered downsampled data for a single vessel" width="800"/>
 
-*Clean dataset (green) for the same vessel. The red messages are filtered out.*
+*Clean dataset (green) for a single vessel of the input sample. The pink messages are filtered out, while the messages in light blue are kept. In purple you can see the area of interest (greater Syros area) as given to the module; the respective geometry can be found in the 'data/others' folder.*
 
 
-## Density maps generation
+## Creating different density maps
 The density map generation step reads the cleaned ais files and generates density maps with respect to the selected method in the configuration file. There are two options available, the first one measures the number of vessels within each cell while the second one aggregates the time spent within each cell of all vessels crossing it. 
 
 	
-	python -m mt.density.export_density_maps config/config.json 
+	python -m src.ais_manipulation.density.export_density_maps config/config_density.json 
 
 
 
-<img src="./docs/figures/data_multiple_vessels.png" alt="1km side grid used to calculate density maps" width="800"/>
+<img src="./docs/figures/grids.png" alt="Grids of 1km and 0.5km sides, partitioning the area of interest (Syros)." width="800"/>
 
-*1km side grid used to calculate density maps. Cleaned positions of three vessels*
-
-
-<img src="./docs/figures/rasterize.png" alt="The rasterization process" width="800"/>
-
-*The rasterization process.*
+*Two grids of selected side lengths (1000 and 500 meters); smaller grid sizes result in more precise results but take more time in execution.*
 
 
-<img src="./docs/figures/raster_map.png" alt="The resulting map of total vessel in geo-referenced tiff format" width="800"/>
+<img src="./docs/figures/density_combined_500.png" alt="Density maps for all, tanker and pleasure vessels." width="800"/>
 
-*The resulting map of time_at_cells method in geo-referenced tiff format and colormap as provided in configuration.*
+*Density maps for the area of interest, for all, tanker and pleasure vessels respectively. The number of positions were used for this calculation.*
 
 
 ### Filters
@@ -211,6 +197,10 @@ results in :
 	haversine  2.5.1    MIT License 
 	pandas     1.4.2    BSD License 
 	pyproj     3.3.1    MIT License 
+
+## Acknowledgement :
+ ***This work has been supported by the "Athena" Research Center, as part of the project MIS 5154714 of the National Recovery and Resilience Plan Greece 2.0 funded by the European Union under the NextGenerationEU Program.***
+
 
 ## License Terms 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.

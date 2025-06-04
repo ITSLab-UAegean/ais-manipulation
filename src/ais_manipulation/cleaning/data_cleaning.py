@@ -13,13 +13,13 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import pyproj
 import pandas as pd
 from haversine import haversine
-from shapely.geometry import Point, shape
+from shapely.geometry import Point, shape, Polygon, MultiPolygon
 from shapely.ops import transform
 from shapely.strtree import STRtree
 from shapely.validation import make_valid
 
-from  mt.utils.get_grid import load_geom
-from  mt.utils.auxiliary import polygon_split
+from  ais_manipulation.geospatial.get_grid import load_geom
+from  src.ais_manipulation.geospatial.polygon_split import polygon_split
 
 
 CONFIG = None
@@ -70,10 +70,8 @@ def clean_mmsi(mmsi):
                                 r_spd : removed due to noise filtering
                                 r_tf : removed due to imposed timeframe
     """
-    # HEADER: TIMESTAMP,MMSI,LON,LAT,HEADING,COURSE,SPEED,NAVIGATIONAL_STATUS,TYPE,STATION,CLASS
-    TS, MMSI, LON, LAT, HEAD, COG, SOG, NAVS, TYPE, STATION, CLASS = (0,1,2,3,4,5,6,7,8,9,10)
-    
-    del HEAD,NAVS,TYPE,STATION,CLASS # removing unused variables
+    # HEADER: TIMESTAMP,MMSI,LON,LAT,HEADING,COURSE,SPEED,TYPE
+    TS, MMSI, LON, LAT, HEAD, COG, SOG, TYPE = (0,1,2,3,4,5,6,7)
     
     # COUNTERS
     rows = 0  # total input rows
@@ -97,7 +95,7 @@ def clean_mmsi(mmsi):
     cleaned_output_path = os.path.join(CONFIG["ais_cleaned_path"], str(mmsi) + "_clean.csv")
     with open(cleaned_output_path, "w",encoding="utf-8") as out_file:
         out_file.write(
-            "TIMESTAMP,MMSI,LON,LAT,X,Y,HEADING,COURSE,SPEED,NAVIGATIONAL_STATUS,TYPE,STATION,CLASS\n"
+            "TIMESTAMP,MMSI,LON,LAT,X,Y,HEADING,COURSE,SPEED,TYPE\n"
         )
 
         pt = 0
@@ -105,7 +103,6 @@ def clean_mmsi(mmsi):
         fst_flag = False
         with open(os.path.join(CONFIG["ais_path"] ,mmsi + ".csv"), "r",encoding="utf-8") as in_file:
 
-            # print('\tReading input file (%s).'%(mmsi+'.csv'))
             next(in_file)
             for line in in_file:
 
@@ -140,12 +137,7 @@ def clean_mmsi(mmsi):
                     if (row[MMSI] in false_mmsi) or (len(row[MMSI]) != 9):
                         r_iid += 1
                         continue
-
-
-                # if config['remove_special_characters']:
-                #     # Remove special characters from name and call sing.
-                #     row[NAME] = re.sub('[^A-Za-z0-9 ]+', '', row[NAME])
-                #     row[CALLS] = re.sub('[^A-Za-z0-9 ]+', '', row[CALLS])
+                    
                 
                 ts = int(row[TS])
 
@@ -164,13 +156,12 @@ def clean_mmsi(mmsi):
                 if CONFIG["noise_filter"]:
                     if fst_flag:
                         ddist = haversine((clat, clon), (plat, plon), unit="km")
-                        cspeed = (ddist * 60.0 * 60.0 * 1000.0) / (ts - pt)
+                        cspeed = (ddist * 60.0 * 60.0) / (ts - pt)
                         if cspeed > max_sp:
                             r_spd += 1
                             continue
 
                 projected = transform(PROJECT, Point(clon, clat))
-                # grid_edge_length: default->10, if different get by user
                 if CONFIG["land_mask"]:
                     if (len(SEAS_RTREE.query(projected, predicate='intersects'))== 0):
                         r_geo += 1
@@ -182,7 +173,7 @@ def clean_mmsi(mmsi):
                 rows_out += 1
                 fst_flag = True
                 out_file.write(
-                    f"{row[0]},{row[1]},{row[2]},{row[3]},{projected.x},{projected.y},{row[4]},{row[5]},{row[6]},{row[7]},{row[8]},{row[9]},{row[10]}\n"
+                    f"{row[TS]},{row[MMSI]},{row[LON]},{row[LAT]},{projected.x},{projected.y},{row[HEAD]},{row[COG]},{row[SOG]},{row[TYPE]}\n"
                 )
 
     if(rows_out==0):
@@ -236,11 +227,15 @@ def clean_data(_config, _seas_tree=[], grid_edge_length=-1):
             seas = load_geom(_config, out_crs=out_crs)
             logging.warning("\tLoaded geometries for land mask.")
             for _, sea in seas.iterrows():
-                polygons = shape(sea["geometry"])
-                for _polygon in polygons.geoms:
-                    seas_list += polygon_split(
-                        make_valid(_polygon), threshold=grid_edge_length
-                    )
+                shapely_geo_obj = shape(sea["geometry"])
+                if isinstance(shapely_geo_obj, Polygon):
+                    processed_polygons = polygon_split(make_valid(shapely_geo_obj), threshold=grid_edge_length)
+                    seas_list.extend(processed_polygons)
+                elif isinstance(shapely_geo_obj, MultiPolygon):
+                    for _polygon in shapely_geo_obj.geoms:
+                        processed_polygons = polygon_split(make_valid(_polygon), threshold=grid_edge_length)
+                        seas_list.extend(processed_polygons)
+
         _seas_tree = STRtree(seas_list)
         logging.warning("\tLoaded land mask.\n")
 

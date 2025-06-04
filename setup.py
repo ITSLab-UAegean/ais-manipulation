@@ -13,10 +13,6 @@ with open("README.md", "r", encoding="utf-8") as fh:
 with open(Path('./', "requirements.txt"), "r",encoding='utf-8') as file:
     REQUIREMENTS = [ln.strip() for ln in file.readlines()]
 
-# # specify requirements of your package here
-# REQUIREMENTS = ["fiona", "geopandas", "pyproj","docopt"]
-# REQUIREMENTS = []
-
 # calling the setup function
 setuptools.setup(
     name="mt_ais_toolbox",
@@ -30,7 +26,7 @@ setuptools.setup(
     license="CC BY-NC-SA 4.0",
     package_dir={"": "src"},
     packages=setuptools.find_packages(
-        where="src", include=["mt", "mt.*", "mt.utils", "mt.utils.*"]
+        where="src", include=["ais_manipulation", "ais_manipulation.*", "ais_manipulation.utils", "ais_manipulation.utils.*"]
     ),
     classifiers=[
         "Development Status :: 4 - Alpha",

@@ -1,4 +1,11 @@
-# AIS toolbox 
+# AIS Manipulation Toolbox 
+
+The provided repository is a Python toolbox, designed to manage, process and create effective vizualizations of vessel trajectories, as depicted in Automatic Identification Systems data. The toolbox comes with a series of functionalities to filter erroneous data, create precise selections and transform the trajectories. Additionally, processes like the extraction of specific (stop-to-stop) trips in the data and a tokenization methodology are provided. Finally, several density measures are included in the module, in order to create traffic visualizations best-fit for each use case. The toolbox is created in order to be easily extended and configuralbe according to the user-defined thresholds and methods.
+
+
+This project takes advantage of the previously published open-source [toolbox by MarineTraffic](https://github.com/marinetraffic/mt-ais-toolbox), extending its capabilities and adding components towards the modelling of vessel traffic.
+
+
 
 
 ## Overview
@@ -35,9 +42,6 @@ changes in paths are required to run the following examples.
 
 Check also the [configuration section below](#Configuration)
 
-Note: it is recommended to set the following system variable to speed up pygeos spatial joins:
-
-	export USE_PYGEOS=1
 
 ### Installation on Windows OS
 
@@ -196,7 +200,7 @@ results in :
 
 
 ## Acknowledgement :
- ***This work has been partially funded by the European Maritime and Fisheries Fund (EMFF) through service contract No. CINEA/EMFF/2020/3.1.16/Lot2/SI2.850940***
+ ***This work has been supported by the "Athena" Research Center, as part of the project MIS 5154714 of the National Recovery and Resilience Plan Greece 2.0 funded by the European Union under the NextGenerationEU Program.***
 
 ## License Terms 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.

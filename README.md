@@ -19,8 +19,8 @@ This project takes advantage of the previously published open-source [toolbox by
 
 We strongly recommend running this module in virtual environment to ensure packages compatibility. 
 	
-	git clone https://github.com/SmartMoveLab/ais-toolbox.git;
-	cd ais-toolbox/;
+	git clone https://github.com/ITSLab-UAegean/ais-manipulation.git;
+	cd ais-manipulation/;
 	python3 -m venv .venv;
 	source .venv/bin/activate;
 	pip install -e .;
@@ -84,7 +84,7 @@ Each step of our approach requires some parameters that include: paths for input
 
 As a first step, the input AIS file should be split, according to the MMSI; meaning that each resulting file would have alll positions from a single vessel. The input thus for this step is a comma-separated values file. For this step, a small configuration file should be created, including only the original file path and the directory where the multiple files will be dumped on.
 
-python -m src.ais_manipulation.file_management.split_file config/config_split.json
+	python -m src.ais_manipulation.file_management.split_file config/config_split.json
 
 
 
@@ -114,8 +114,7 @@ The following command will clean the data in an effective way (in parallel), acc
 
 
 ## Creating different density maps
-The density map generation step reads the cleaned ais files and generates density maps with respect to the selected method in the configuration file. There are two options available, the first one measures the number of vessels within each cell while the second one aggregates the time spent within each cell of all vessels crossing it. 
-
+Using the cleaned AIS tracks, we are able to generate effective visual representations of the vessel traffic. In order to do so, a density metric should be selected and applied on each grid cell separately. Here we provide a few options (time spent by the vessels, number of vessel passing, number of AIS messages available etc.). The code is structured tso it would be easy for the user to add their own metric for their analysis. To extract the density maps simply use the following command.
 	
 	python -m src.ais_manipulation.density.export_density_maps config/config_density.json 
 
@@ -123,7 +122,7 @@ The density map generation step reads the cleaned ais files and generates densit
 
 <img src="./docs/figures/grids.png" alt="Grids of 1km and 0.5km sides, partitioning the area of interest (Syros)." width="800"/>
 
-*Two grids of selected side lengths (1000 and 500 meters); smaller grid sizes result in more precise results but take more time in execution.*
+*Two grids of selected side lengths (1000 and 500 meters); smaller grid sizes result in more precise results but takes more time in execution.*
 
 
 <img src="./docs/figures/density_combined_500.png" alt="Density maps for all, tanker and pleasure vessels." width="800"/>
@@ -131,7 +130,27 @@ The density map generation step reads the cleaned ais files and generates densit
 *Density maps for the area of interest, for all, tanker and pleasure vessels respectively. The number of positions were used for this calculation.*
 
 
-### Filters
+
+## Merging AIS files
+Since most applications require a single file for processing, we include a dedicated script that merges the contents of an AIS folder into a single final file. 
+
+	python -m src.ais_manipulation.file_management.merge_files config/config_merge.json
+
+
+## Extracting vessel trips
+In order to analyze and better process AIS tracks it is quite useful to know the different trips followed by the vessels. Here we provide a solution for annotating the AIS messages with the appropriate trip identifier. In order to do so, we consider the vessel "stops" based on the reported SPEED, and do not focus solely on port to port voyages. Some thresholds regarding the maximum time gap between the messages, the minimum messages for considering a separate trip and other are defined within the code, and could be altered according to the needs of the user.
+
+	python -m src.ais_manipulation.trips.find_trips config/config_trips.json
+
+So, for example, the result for a single vessel would be the following (with different colors signaling messages from different trips of the same vessel):
+
+
+<img src="./docs/figures/trips.png" alt="Split trips for a single vessel." width="400"/>
+
+
+
+---
+### Cleaning Filters (detailed)
 The filters provided by the AIS toolbox include:
 - Removing all messages with empty coordinates, timestamp, speed or course fields.
 - Removing points outside the area of interest (as defined from the configuration file), including points on land. 
@@ -148,7 +167,7 @@ The configuration file given determines which of the above filters would be appl
 # Configuration
 
 
-The toolbox configuration file is a json file that consists of the parameters that control among others the input and output paths, adjust the sensitivity of the data cleaning process and control other aspects of the map generation process.   
+The toolbox configuration files are json files that consist of the parameters that control among others the input and output paths, adjust the sensitivity of the data cleaning process and control other aspects of the map generation process. Some indicative parameters are listed below. Additionally, some sample config files are included in the /config folder.
 
 
 | *Parameter* |	*Description*                                   | *Default Values* |
@@ -199,7 +218,7 @@ results in :
 	pyproj     3.3.1    MIT License 
 
 ## Acknowledgement :
- ***This work has been supported by the "Athena" Research Center, as part of the project MIS 5154714 of the National Recovery and Resilience Plan Greece 2.0 funded by the European Union under the NextGenerationEU Program.***
+ ***This work has been partially supported by the "Athena" Research Center, as part of the project MIS 5154714 of the National Recovery and Resilience Plan Greece 2.0 funded by the European Union under the NextGenerationEU Program.***
 
 
 ## License Terms 

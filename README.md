@@ -176,7 +176,6 @@ The toolbox configuration files are json files that consist of the parameters th
 |"grids_path"| Path for saving grid | in config |
 |"ais_path"|Path of merged AIS messages directory| in config |
 |"ais_cleaned_path"|Path of cleaned AIS messages directory|  in config |
-|"ais_decoded_path"| Path of merged AIS messages directory |  in config |
 |"density_path"| Path of resulting density files directory |  in config |
 |"colors_files_path"| Path of density file (TIFF) color files directory   |  in config |
 |"ais_stats_path"|Path for the statistics directory|  in config |

@@ -1,15 +1,21 @@
-
-merge:
-	rm -rf data/samples/01_merged/*.csv;
-	python -m mt.cleaning.ais_merge config/config.json
-
+split:
+	rm -rf data/testing/01_split/*.csv;
+	python -m src.ais_manipulation.file_management.split_file config/config_split.json
 
 clean:
-	rm -rf data/samples/02_clean/*.csv;
-	python -m mt.cleaning.data_cleaning config/config.json
+	rm -rf data/testing/02_cleaned/*.csv;
+	python -m src.ais_manipulation.cleaning.data_cleaning config/config_cleaning.json 
 
 maps:
-	python -m mt.density.export_density_maps config/config.json
+	python -m src.ais_manipulation.density.export_density_maps config/config_density.json 
+
+merge:
+	rm -rf data/testing/04_merged/*.csv;
+	python -m src.ais_manipulation.file_management.merge_files config/config_merge.json
+
+trips:
+	rm -rf data/testing/05_trips/*.csv;
+	python -m src.ais_manipulation.trips.find_trips config/config_trips.json
 
 
 reset_sample:
@@ -17,11 +23,11 @@ reset_sample:
 	rm -rf data/samples/03_density/*.csv;
 	rm -rf data/samples/03_density/*.tif;
 	
-	rm -rf data/samples/02_clean/*.csv;
+	rm -rf data/samples/02_cleaned/*.csv;
 
-	rm -rf data/samples/01_merged/*.csv;
-	rm -rf data/samples/99_metadata/*.csv;
-	rm -rf data/samples/99_metadata/*.json;
+	rm -rf data/samples/01_split/*.csv;
+	rm -rf data/samples/metadata/*.csv;
+	rm -rf data/samples/metadata/*.json;
 
 
 all:

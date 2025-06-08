@@ -15,14 +15,14 @@ with open(Path('./', "requirements.txt"), "r",encoding='utf-8') as file:
 
 # calling the setup function
 setuptools.setup(
-    name="mt_ais_toolbox",
-    version="0.0.1a1",
-    description="A set of tool to create density maps for AIS data",
+    name="ais_manipulation",
+    version="0.1.0",
+    description="Different functions to process and visualize AIS tracks.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     # url='',
-    author="MarineTraffic Research Labs",
-    author_email="research@marinetraffic.com",
+    author="Intelligent Transportation Systems, University of the Aegean.",
+    author_email="",
     license="CC BY-NC-SA 4.0",
     package_dir={"": "src"},
     packages=setuptools.find_packages(

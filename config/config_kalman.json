@@ -1,0 +1,7 @@
+{
+  "ais_path": "data/testing/02_cleaned/",
+  "ais_cleaned_path": "data/testing/02b_kalman/",
+  "ais_stats_path": "data/testing/metadata/",
+  "recompute_preprocessed_data": false, 
+  "max_threads": 4 
+}

@@ -64,13 +64,15 @@ This package includes
 	- the AIS file path
 	- the geometry file paths
 	- the grid cells' size for cleaning and density-maps creation 
-	- runtime parameters regarding the data cleaning and filtering process
+	- runtime parameters regarding the data cleaning, density calculation and trip extraction process
 
 - Implementations for:
 	- Loading AIS data
 	- Cleaning the data
 	- Generating grid
 	- Generating density map using GDAL
+	- Extracting trips for each vessel
+	- Tokenization of vessel positions
 	
 	
  
@@ -95,7 +97,7 @@ The input messages are AIS positional reports (also including the vessel type):
 
 TIMESTAMP is expressed in as an EPOCH (in seconds), LON and LAT are the coordinates according to EPSG:4326, and TYPE is the vessel type number according to AIS.
 
-<img src="./docs/figures/raw_data.png" alt="Raw AIS dataset of multiple vessels" width="800"/>
+<img src="./docs/figures/raw_data.png" alt="Raw AIS dataset of multiple vessels" width="800" style="display: block; margin: 0 auto;"/>
 
 *Sample dataset based on real vessel movement around the island of Syros, in Greece. The positions are collored according to the reported MMSI of the messages.*
 
@@ -108,10 +110,18 @@ The following command will clean the data in an effective way (in parallel), acc
 	
 	python -m src.ais_manipulation.cleaning.data_cleaning config/config_cleaning.json 
 
-<img src="./docs/figures/downsampled_data.png" alt="Cleaned, filtered downsampled data for a single vessel" width="800"/>
+<img src="./docs/figures/downsampled_data.png" alt="Cleaned, filtered downsampled data for a single vessel" width="800" style="display: block; margin: 0 auto;"/>
 
 *Clean dataset (green) for a single vessel of the input sample. The pink messages are filtered out, while the messages in light blue are kept. In purple you can see the area of interest (greater Syros area) as given to the module; the respective geometry can be found in the 'data/others' folder.*
 
+
+Additionally, an optional step that takes advantage of Kalman filtering to remove noise positions is provided. For this filtering process, we assume a constant velocty model of movement for the vessel between the positions. Additionally, large temporal gaps between the messages (default value utilized 30 mins.) reinitialize the Kalman filter process. This process is not obligatory for the next steps (density maps, trip extraction, tokenization), and does not change the format of the data. Note that, this process does not project the coordinates itself, and should probably be applied after the cleaning step.
+
+	python -m src.ais_manipulation.cleaning.kalman_filter config/config_kalman.json 
+
+<img src="./docs/figures/kalman.png" alt="Cleaned trajectory of a single vessel according to Kalman filter" width="600" style="display: block; margin: 0 auto;"/>
+
+*An example of a trajectory where a position that did not follow the Kalman filtering (orange). Through this step we are able to remove it and continue with a track with less noisy data (green).*
 
 ## Creating different density maps
 Using the cleaned AIS tracks, we are able to generate effective visual representations of the vessel traffic. In order to do so, a density metric should be selected and applied on each grid cell separately. Here we provide a few options (time spent by the vessels, number of vessel passing, number of AIS messages available etc.). The code is structured tso it would be easy for the user to add their own metric for their analysis. To extract the density maps simply use the following command.
@@ -120,12 +130,12 @@ Using the cleaned AIS tracks, we are able to generate effective visual represent
 
 
 
-<img src="./docs/figures/grids.png" alt="Grids of 1km and 0.5km sides, partitioning the area of interest (Syros)." width="800"/>
+<img src="./docs/figures/grids.png" alt="Grids of 1km and 0.5km sides, partitioning the area of interest (Syros)." width="800" style="display: block; margin: 0 auto;"/>
 
 *Two grids of selected side lengths (1000 and 500 meters); smaller grid sizes result in more precise results but takes more time in execution.*
 
 
-<img src="./docs/figures/density_combined_500.png" alt="Density maps for all, tanker and pleasure vessels." width="800"/>
+<img src="./docs/figures/density_combined_500.png" alt="Density maps for all, tanker and pleasure vessels." width="800" style="display: block; margin: 0 auto;"/>
 
 *Density maps for the area of interest, for all, tanker and pleasure vessels respectively. The number of positions were used for this calculation.*
 
@@ -145,7 +155,7 @@ In order to analyze and better process AIS tracks it is quite useful to know the
 So, for example, the result for a single vessel would be the following (with different colors signaling messages from different trips of the same vessel):
 
 
-<img src="./docs/figures/trips.png" alt="Split trips for a single vessel." width="400"/>
+<img src="./docs/figures/trips_other.png" alt="Split trips for a single vessel." width="400" style="display: block; margin: 0 auto;"/>
 
 
 

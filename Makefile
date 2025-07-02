@@ -19,19 +19,20 @@ trips:
 
 
 reset_sample:
-	rm -rf data/samples/03_density/*.vrt;
-	rm -rf data/samples/03_density/*.csv;
-	rm -rf data/samples/03_density/*.tif;
+	rm -rf data/testing/03_density/*.vrt;
+	rm -rf data/testing/03_density/*.csv;
+	rm -rf data/testing/03_density/*.tif;
 	
-	rm -rf data/samples/02_cleaned/*.csv;
+	rm -rf data/testing/02_cleaned/*.csv;
+	rm -rf data/testing/02b_kalman/*.csv;
 
-	rm -rf data/samples/01_split/*.csv;
-	rm -rf data/samples/metadata/*.csv;
-	rm -rf data/samples/metadata/*.json;
+	rm -rf data/testing/01_split/*.csv;
+	rm -rf data/testing/metadata/*.csv;
+	rm -rf data/testing/metadata/*.json;
 
 
 all:
 	make reset_sample;
-	make merge;
+	make split;
 	make clean;
 	make maps;

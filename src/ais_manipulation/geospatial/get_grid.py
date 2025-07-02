@@ -3,7 +3,7 @@ import time
 import fiona
 
 import geopandas as gpd
-from shapely.geometry import Polygon, shape
+from shapely.geometry import Polygon, MultiPolygon, shape
 from shapely.validation import make_valid
 
 

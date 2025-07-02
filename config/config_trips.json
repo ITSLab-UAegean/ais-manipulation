@@ -1,0 +1,4 @@
+{
+    "ais_file_path": "data/testing/04_merged/merged_positions.csv",
+    "output_file_path": "data/testing/05_trips/positions_trips.csv"
+}

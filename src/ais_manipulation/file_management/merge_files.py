@@ -15,6 +15,8 @@ def merge_files(_config):
 
     df = []
     for file in os.listdir(ais_directory_path):
+        if(file[0]=='.'):
+            continue
         df.append(copy.deepcopy(pd.read_csv(ais_directory_path+'/'+file)))
     df = pd.concat(df)
     df.to_csv(output_file_path+"/merged_positions.csv", index=False)

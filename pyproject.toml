@@ -1,6 +1,63 @@
 [build-system]
 requires = [
-    "setuptools>=42",
+    "setuptools>=61.0.0",
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "ais-manipulation"
+version = "0.1.0"
+description = "Different functions to process, analyze and visualize vessel trajectory data."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+
+authors = [
+    {name = "Alexandros Troupiotis-Kapeliaris", email = "alextroupi@aegean.gr"},
+    {name = "Giannis Spiliopoulos", email = "gspiliopoulos@aegean.gr"},
+    {name = "Dimitris Zissis", email = "dzissis@aegean.gr"}
+]
+keywords = ["ais", "trajectory", "vessel mobility", "density maps", "tokenization"]
+classifiers = [ 
+    "Programming Language :: Python :: 3",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha", # Or other status
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: GIS",
+]
+
+# --- DEPENDENCIES ---
+dependencies = [
+    "scipy>=1.7.3",
+    "networkx>=2.5",
+    "Fiona>=1.8.20",
+    "Shapely>=2.0.0",
+    "pandas>=1.4.2",
+    "numpy>=1.22.4",
+    "geopandas>=0.10.2",
+    "pyproj>=3.3.1",
+    "docopt>=0.6.2",
+    "haversine>=2.5.1",
+    "psutil>=5.9.4",
+    "filterpy>=1.4.5",
+]
+
+# --- PROJECT URLs ---
+[project.urls]
+Homepage = "https://github.com/ITSLab-UAegean/ais-manipulation"
+"Bug Tracker" = "https://github.com/ITSLab-UAegean/ais-manipulation/issues"
+"Source Code" = "https://github.com/ITSLab-UAegean/ais-manipulation"
+
+
+
+# --- PACKAGE DISCOVERY (How setuptools finds your Python files) ---
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"ais_manipulation" = ["data/**", "config/**"]

@@ -66,3 +66,27 @@ def positions_count(file_path):
     res = res.groupby('gridID').count()[['TIMESTAMP']].rename(columns={'TIMESTAMP': 'density'})
     
     return res, get_vessel_type_dataframe(pos)
+
+
+
+def passes_count(file_path):
+    """_summary_
+
+    Args:
+    file_path (_type_): _description_
+
+    Returns:
+    _type_: _description_
+    """
+    pos = pd.read_csv(file_path)
+    pos['xGrid'] = pos['X'] / gridEL
+    pos['yGrid'] = pos['Y'] / gridEL
+    pos['xGrid'] = pos['xGrid'].astype(int).astype(str)
+    pos['yGrid'] = pos['yGrid'].astype(int).astype(str)
+    pos['gridID'] = pos['xGrid'] + '_' + pos['yGrid']
+    pos[['lag_gridID']] = pos[['gridID']].shift(1)
+    pos=pos[pos['gridID']!=pos['lag_gridID']]
+    res = pos.merge(grid, on='gridID', how='inner')
+    res = res.groupby('gridID').count()[['TIMESTAMP']].rename(columns={'TIMESTAMP': 'density'})
+    
+    return res, get_vessel_type_dataframe(pos)

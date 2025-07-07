@@ -5,7 +5,7 @@ import pandas as pd
 import geopandas as gpd
 from haversine import haversine
 from shapely.geometry import Point, LineString
-from ais_manipulation.density.vessel_type import get_vessel_type
+from ais_manipulation.density.vessel_type import get_vessel_type_dataframe
 
 grid = None
 gridEL = None
@@ -71,8 +71,8 @@ def distance_covered_density(file_path):
     pos['dt'] = pos['TIMESTAMP'] - pos['lag_t']
     # Selecting transitions to be considered
     pos['ddist'] = pos.apply(lambda row: eucliadianDist(row), axis=1) #meters
-    pos['calc_speed'] = pos.apply(lambda row: row['ddist']/row['dt'] if (row['dt']>0.0) else 1000.0,axis=1) #meters/milliseconds
-    pos=pos[(pos.ddist<=30000) & (pos.dt<=(6*60*60*1000)) & (pos.calc_speed<=0.0257222) ]
+    pos['calc_speed'] = pos.apply(lambda row: row['ddist']/row['dt'] if (row['dt']>0.0) else 1000.0,axis=1) #meters/seconds
+    pos=pos[(pos.ddist<=30000) & (pos.dt<=(2*60*60)) & (pos.calc_speed<=25.7222) ] # 25.7222 ==> 50 knots
 
     posGridChange = copy.deepcopy(pos[pos.gridID != pos.lag_gridID])
     posGridChange['pos_id'] = posGridChange.index
@@ -86,24 +86,24 @@ def distance_covered_density(file_path):
 
     # Compute overlays between grids and pos linestrings
     if(len(posGridChange)!=0):
-        overlays = gpd.overlay(gpd.GeoDataFrame(posGridChange[['pos_id','geometry','lineLength','dt']]).set_crs(epsg=outCRS), grid, how='intersection')
+        overlays = gpd.overlay(gpd.GeoDataFrame(posGridChange[['pos_id','geometry','lineLength','ddist']]).set_crs(epsg=outCRS), grid, how='intersection')
         overlays['overlayLength'] = overlays.geometry.length
         overlays['overlayPercentage'] = overlays['overlayLength'] / overlays['lineLength']
-        overlays['overlayDt'] = overlays['overlayPercentage'] * overlays['dt']
-        timesAtGridChange = overlays.groupby(['gridID'])['overlayDt'].sum().rename('dtGridChange').to_frame().reset_index()
+        overlays['overlayDdist'] = overlays['overlayPercentage'] * overlays['ddist']
+        distAtGridChange = overlays.groupby(['gridID'])['overlayDdist'].sum().rename('distGridChange').to_frame().reset_index()
 
     posGridNoChange = pos[pos.gridID == pos.lag_gridID]
     posGridNoChange = posGridNoChange.dropna(subset=['X', 'Y', 'lag_X', 'lag_Y'], axis = 0)
-    timesAtGridNoChange = posGridNoChange.groupby(['gridID'])['dt'].sum().rename('dtGridNoChange').to_frame().reset_index()
+    distAtGridNoChange = posGridNoChange.groupby(['gridID'])['ddist'].sum().rename('distGridNoChange').to_frame().reset_index()
     
 
     # Computing times spent at cells
     if(len(posGridChange)!=0):
-        timesSpent = pd.merge(timesAtGridNoChange, timesAtGridChange, how = 'outer', left_on = ['gridID'], right_on = ['gridID'])
+        distCovered = pd.merge(distAtGridNoChange, distAtGridChange, how = 'outer', left_on = ['gridID'], right_on = ['gridID'])
     else:
-        timesSpent = timesAtGridNoChange
-        timesSpent['dtGridChange'] = 0
-    timesSpent['density'] = timesSpent[['dtGridNoChange','dtGridChange']].sum(axis=1) / (3600*1000)
-    timesSpent.set_index('gridID', inplace=True)
-    timesSpent.rename_axis(None, axis=0, inplace=True)
-    return timesSpent[['density']], get_vessel_type(pos)
+        distCovered = distAtGridNoChange
+        distCovered['distGridChange'] = 0
+    distCovered['density'] = distCovered[['distGridNoChange','distGridChange']].sum(axis=1)
+    distCovered.set_index('gridID', inplace=True)
+    distCovered.rename_axis(None, axis=0, inplace=True)
+    return distCovered[['density']], get_vessel_type_dataframe(pos)

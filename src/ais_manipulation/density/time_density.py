@@ -72,7 +72,7 @@ def time_spent_density(file_path):
     # Selecting transitions to be considered
     pos['ddist'] = pos.apply(lambda row: eucliadianDist(row), axis=1) #meters
     pos['calc_speed'] = pos.apply(lambda row: row['ddist']/row['dt'] if (row['dt']>0.0) else 1000.0,axis=1) #meters/seconds
-    pos=pos[(pos.ddist<=30000) & (pos.dt<=(2*60*60)) & (pos.calc_speed<=0.0257222) ]
+    pos=pos[(pos.ddist<=30000) & (pos.dt<=(2*60*60)) & (pos.calc_speed<=25.7222) ] # 25.7222 ==> 50 knots
 
     posGridChange = copy.deepcopy(pos[pos.gridID != pos.lag_gridID])
     posGridChange['pos_id'] = posGridChange.index

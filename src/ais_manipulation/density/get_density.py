@@ -16,10 +16,12 @@ import json
 
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
-from src.ais_manipulation.density.time_density import time_spent_density,time_spent_density_init
 from ais_manipulation.geospatial.get_grid import load_grids
-from src.ais_manipulation.density.count_density import vessels_count,positions_count,simple_density_init
+from src.ais_manipulation.density.time_density import time_spent_density,time_spent_density_init
+from src.ais_manipulation.density.distance_density import distance_covered_density_init,distance_covered_density
+from src.ais_manipulation.density.count_density import vessels_count,positions_count,passes_count,simple_density_init
 from src.ais_manipulation.file_management.output_file_utils import check_if_path_exists
+
 
 
 
@@ -53,8 +55,14 @@ def get_density(config, gridEdgeLength=-1, ais_files_path=''):
     if(config['density_method']=='time_spent'):
         dmethod = time_spent_density
         dmethod_init = time_spent_density_init
+    elif(config['density_method']=='distance_covered'):
+        dmethod = distance_covered_density
+        dmethod_init = distance_covered_density_init
     elif(config['density_method']=='positions_count'):
         dmethod = positions_count
+        dmethod_init = simple_density_init
+    elif(config['density_method']=='passes_count'):
+        dmethod = passes_count
         dmethod_init = simple_density_init
     else:
         dmethod = vessels_count

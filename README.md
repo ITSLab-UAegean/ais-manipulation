@@ -37,7 +37,7 @@ To deactivate the virtual environment use:
 The package can also be installed directly from our gitub repo with the following command, however additional 
 changes in paths are required to run the following examples.
 
-	pip install git+https://github.com/SmartMoveLab/ais-toolbox.git;
+	pip install git+https://github.com/ITSLab-UAegean/ais-manipulation.git
 
 
 Check also the [configuration section below](#Configuration)

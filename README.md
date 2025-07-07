@@ -124,7 +124,7 @@ Additionally, an optional step that takes advantage of Kalman filtering to remov
 *An example of a trajectory where a position that did not follow the Kalman filtering (orange). Through this step we are able to remove it and continue with a track with less noisy data (green).*
 
 ## Creating different density maps
-Using the cleaned AIS tracks, we are able to generate effective visual representations of the vessel traffic. In order to do so, a density metric should be selected and applied on each grid cell separately. Here we provide a few options (time spent by the vessels, number of vessel passing, number of AIS messages available etc.). The code is structured tso it would be easy for the user to add their own metric for their analysis. To extract the density maps simply use the following command.
+Using the cleaned AIS tracks, we are able to generate effective visual representations of the vessel traffic. In order to do so, a density metric should be selected and applied on each grid cell separately. Here we provide a few options (time spent by the vessels, distance covered, number of vessels passing, number of AIS messages available, number of distince passes). The code is structured tso it would be easy for the user to add their own metric for their analysis. To extract the density maps simply use the following command.
 	
 	python -m src.ais_manipulation.density.export_density_maps config/config_density.json 
 
@@ -204,7 +204,7 @@ The toolbox configuration files are json files that consist of the parameters th
 |"start/end_time"| The startin/ending times for the teimframe filter (in milliseconds) | in config (example: 1647592893000)|
 |"min_positions"|Number of minimum AIS messages for the file to be included in the cleaning process| 10|
 |"max_threads"| Maximium number of threads during execution; only for the processes that work in parallel| 4 |
-|"density_method"| Method to be used for density maps 'vessels_count'(default) or 'time_at_cells' |'vessels_count' | 'positions_count' |
+|"density_method"| Method to be used for density maps 'vessels_count', 'positions_count', 'passes_count', 'distance_covered' or 'time_spent' |'vessels_count' |
 |"density_vessel_types"|List of types of vessels to be considered while creating density maps. One map will be generated for each vessel type, based on the type codes provided in the AIS. The 'All' option includes all vessels regardless their type. Options include: ['All', 'Cargo', 'Tanker', 'Dredging', 'HSC', 'Fishing', 'Military_Law', 'Passenger', 'Pleasure', 'Sailing', 'Service', 'Tug', 'Unknown', 'Other']|'All'|
 
 Directory ('colors_files_path')  with color files should include a TXT file, named 'colors_{GEL}.txt' with GEL is the each grid edge length in meters (example: 'colors_1000.txt'). Each file should include the density thresholds followed by the appropriate color, expressed as RGB and with an opacity indicator (0-255).

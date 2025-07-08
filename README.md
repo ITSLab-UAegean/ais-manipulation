@@ -226,8 +226,6 @@ results in :
 	pandas     1.4.2    BSD License 
 	pyproj     3.3.1    MIT License 
 
-## Acknowledgement :
- ***This work has been partially supported by the "Athena" Research Center, as part of the project MIS 5154714 of the National Recovery and Resilience Plan Greece 2.0 funded by the European Union under the NextGenerationEU Program.***
 
 
 ## License Terms 

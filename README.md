@@ -1,4 +1,4 @@
-# AIS Manipulation Toolbox 
+# VesselTrack Tools 
 
 The provided repository is a Python toolbox, designed to manage, process and create effective vizualizations of vessel trajectories, as depicted in Automatic Identification Systems data. The toolbox comes with a series of functionalities to filter erroneous data, create precise selections and transform the trajectories. Additionally, processes like the extraction of specific (stop-to-stop) trips in the data and a tokenization methodology are provided. Finally, several density measures are included in the module, in order to create traffic visualizations best-fit for each use case. The toolbox is created in order to be easily extended and configuralbe according to the user-defined thresholds and methods.
 

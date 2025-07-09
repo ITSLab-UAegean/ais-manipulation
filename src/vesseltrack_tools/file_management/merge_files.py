@@ -19,8 +19,8 @@ def merge_files(_config):
             continue
         df.append(copy.deepcopy(pd.read_csv(ais_directory_path+'/'+file)))
     df = pd.concat(df)
-    df.to_csv(output_file_path+"/merged_positions.csv", index=False)
-    print(f"\tCreated a merged file of AIS tracks at {output_file_path}/merged_positions.csv.")
+    df.to_csv(output_file_path+"merged_positions.csv", index=False)
+    print(f"\tCreated a merged file of AIS tracks at {output_file_path}merged_positions.csv.")
 
     
 

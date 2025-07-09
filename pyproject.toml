@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "ais-manipulation"
+name = "vesseltrack-tools"
 version = "0.1.0"
 description = "Different functions to process, analyze and visualize vessel trajectory data."
 readme = "README.md"
@@ -49,9 +49,9 @@ dependencies = [
 
 # --- PROJECT URLs ---
 [project.urls]
-Homepage = "https://github.com/ITSLab-UAegean/ais-manipulation"
-"Bug Tracker" = "https://github.com/ITSLab-UAegean/ais-manipulation/issues"
-"Source Code" = "https://github.com/ITSLab-UAegean/ais-manipulation"
+Homepage = "https://github.com/ITSLab-UAegean/vesseltrack-tools"
+"Bug Tracker" = "https://github.com/ITSLab-UAegean/vesseltrack-tools/issues"
+"Source Code" = "https://github.com/ITSLab-UAegean/vesseltrack-tools"
 
 
 
@@ -60,4 +60,4 @@ Homepage = "https://github.com/ITSLab-UAegean/ais-manipulation"
 where = ["src"]
 
 [tool.setuptools.package-data]
-"ais_manipulation" = ["data/**", "config/**"]
+"vesseltrack_tools" = ["data/**", "config/**"]

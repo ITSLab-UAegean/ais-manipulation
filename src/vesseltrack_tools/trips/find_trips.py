@@ -35,10 +35,10 @@ def find_trips(df):
     # cur_start = 0
     trips_times = []
     trips_names = []
-    prev_t = df.iloc[0]['TIMESTAMP']
+    prev_t = int(df.iloc[0]['TIMESTAMP'])
     
     for _, row in df.iterrows():
-        cur_t = row['TIMESTAMP']
+        cur_t = int(row['TIMESTAMP'])
         if(idle == False):
             dt = cur_t - prev_t
             if(dt > MAX_TRIP_GAP):
@@ -79,7 +79,7 @@ def find_trips(df):
             trips_times.append((cur_start, prev_t+1))
             trips_names.append(f'{df.name}_{cur_start}_{cur_t}')
 
-    df['TRIP'] = df.apply(lambda row: assign_trip(row['TIMESTAMP'], trips_times, trips_names), axis=1)
+    df['TRIP'] = df.apply(lambda row: assign_trip(int(row['TIMESTAMP']), trips_times, trips_names), axis=1)
     df = refine_trips_selection(df)
          
     return df

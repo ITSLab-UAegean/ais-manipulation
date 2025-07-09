@@ -10,7 +10,7 @@ This project takes advantage of the previously published open-source [toolbox by
 
 ## Overview
 
- This document provides a brief overview of process, as well as the data and modules required for the processing of vessel track data. The data used in this overview are decoded historical Automatic Identification System (AIS) data from the area of Syros. The users can alter the configuration files to apply the full processing pipeline on their own data and according to their filtering criteria.
+ This document provides a brief overview of process, as well as the data and modules required for the processing of vessel track data. The data used in this overview are decoded historical Automatic Identification System (AIS) data from the area of Syros. The users can alter the configuration files to apply the full processing pipeline on their own vessel trajectory data and according to their filtering criteria, as long as they follow the format mentioned here.
  
 
 
@@ -45,8 +45,7 @@ Check also the [configuration section below](#Configuration)
 
 ### Installation on Windows OS
 
-This toolbox relies on GDAL library, for rasterization processs mainly, thus installing it in windows operating system will require 
-a working installation of GDAL across your system. 
+This toolbox relies on GDAL library, for rasterization processs mainly, thus installing it in windows operating system will require a working installation of GDAL across your system. 
 
 To use this module in windows you are required to have a working GDAL installation before installing this toolbox. A workaround is installing GDAL through OSGeo4w (https://trac.osgeo.org/osgeo4w/) and define the appropriate paths to use the included python version instead. In addition, you  have to include the bin directory of osgeo installation folder to you PATH environmental variable.
 

@@ -7,8 +7,8 @@ from shapely.geometry import Polygon, MultiPolygon, shape
 from shapely.validation import make_valid
 
 
-from src.ais_manipulation.file_management.output_file_utils import check_if_path_exists, generate_dictionary_IfNotExists
-from src.ais_manipulation.geospatial.polygon_split import polygon_split
+from src.vesseltrack_tools.file_management.output_file_utils import check_if_path_exists, generate_dictionary_IfNotExists
+from src.vesseltrack_tools.geospatial.polygon_split import polygon_split
 
 
 def load_grids(config):

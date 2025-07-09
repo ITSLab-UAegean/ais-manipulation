@@ -16,11 +16,11 @@ import json
 
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import pandas as pd
-from ais_manipulation.geospatial.get_grid import load_grids
-from src.ais_manipulation.density.time_density import time_spent_density,time_spent_density_init
-from src.ais_manipulation.density.distance_density import distance_covered_density_init,distance_covered_density
-from src.ais_manipulation.density.count_density import vessels_count,positions_count,passes_count,simple_density_init
-from src.ais_manipulation.file_management.output_file_utils import check_if_path_exists
+from vesseltrack_tools.geospatial.get_grid import load_grids
+from src.vesseltrack_tools.density.time_density import time_spent_density,time_spent_density_init
+from src.vesseltrack_tools.density.distance_density import distance_covered_density_init,distance_covered_density
+from src.vesseltrack_tools.density.count_density import vessels_count,positions_count,passes_count,simple_density_init
+from src.vesseltrack_tools.file_management.output_file_utils import check_if_path_exists
 
 
 

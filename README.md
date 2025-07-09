@@ -10,7 +10,7 @@ This project takes advantage of the previously published open-source [toolbox by
 
 ## Overview
 
- This document provides a brief overview of process, as well as the data and tools required, to generate density maps using "AIS toolbox". The data used in this overview are decoded historical Automatic Identification System (AIS) data.
+ This document provides a brief overview of process, as well as the data and modules required for the processing of vessel track data. The data used in this overview are decoded historical Automatic Identification System (AIS) data from the area of Syros. The users can alter the configuration files to apply the full processing pipeline on their own data and according to their filtering criteria.
  
 
 
@@ -19,8 +19,8 @@ This project takes advantage of the previously published open-source [toolbox by
 
 We strongly recommend running this module in virtual environment to ensure packages compatibility. 
 	
-	git clone https://github.com/ITSLab-UAegean/ais-manipulation.git;
-	cd ais-manipulation/;
+	git clone https://github.com/ITSLab-UAegean/vesseltrack-tools.git;
+	cd vesseltrack-tools/;
 	python3 -m venv .venv;
 	source .venv/bin/activate;
 	pip install -e .;
@@ -37,7 +37,7 @@ To deactivate the virtual environment use:
 The package can also be installed directly from our gitub repo with the following command, however additional 
 changes in paths are required to run the following examples.
 
-	pip install git+https://github.com/ITSLab-UAegean/ais-manipulation.git
+	pip install git+https://github.com/ITSLab-UAegean/vesseltrack-tools.git
 
 
 Check also the [configuration section below](#Configuration)
@@ -86,7 +86,7 @@ Each step of our approach requires some parameters that include: paths for input
 
 As a first step, the input AIS file should be split, according to the MMSI; meaning that each resulting file would have alll positions from a single vessel. The input thus for this step is a comma-separated values file. For this step, a small configuration file should be created, including only the original file path and the directory where the multiple files will be dumped on.
 
-	python -m src.ais_manipulation.file_management.split_file config/config_split.json
+	python -m src.vesseltrack_tools.file_management.split_file config/config_split.json
 
 
 
@@ -108,7 +108,7 @@ TIMESTAMP is expressed in as an EPOCH (in seconds), LON and LAT are the coordina
 AIS data should be preprocessed before any significant analysis. Erroneous or incomplete messages should be removed, while spatial and temporal filters allow for more precise data selection. Finally a downsampling mechanism allows for temporal downsampling in order to redue the size of unnecessary large datasets.
 The following command will clean the data in an effective way (in parallel), according to the filters selected in the configuration file, while also producing a statistics report of the process:
 	
-	python -m src.ais_manipulation.cleaning.data_cleaning config/config_cleaning.json 
+	python -m src.vesseltrack_tools.cleaning.data_cleaning config/config_cleaning.json 
 
 <img src="./docs/figures/downsampled_data.png" alt="Cleaned, filtered downsampled data for a single vessel" width="800" style="display: block; margin: 0 auto;"/>
 
@@ -117,7 +117,7 @@ The following command will clean the data in an effective way (in parallel), acc
 
 Additionally, an optional step that takes advantage of Kalman filtering to remove noise positions is provided. For this filtering process, we assume a constant velocty model of movement for the vessel between the positions. Additionally, large temporal gaps between the messages (default value utilized 30 mins.) reinitialize the Kalman filter process. This process is not obligatory for the next steps (density maps, trip extraction, tokenization), and does not change the format of the data. Note that, this process does not project the coordinates itself, and should probably be applied after the cleaning step.
 
-	python -m src.ais_manipulation.cleaning.kalman_filter config/config_kalman.json 
+	python -m src.vesseltrack_tools.cleaning.kalman_filter config/config_kalman.json 
 
 <img src="./docs/figures/kalman.png" alt="Cleaned trajectory of a single vessel according to Kalman filter" width="600" style="display: block; margin: 0 auto;"/>
 
@@ -126,7 +126,7 @@ Additionally, an optional step that takes advantage of Kalman filtering to remov
 ## Creating different density maps
 Using the cleaned AIS tracks, we are able to generate effective visual representations of the vessel traffic. In order to do so, a density metric should be selected and applied on each grid cell separately. Here we provide a few options (time spent by the vessels, distance covered, number of vessels passing, number of AIS messages available, number of distince passes). The code is structured tso it would be easy for the user to add their own metric for their analysis. To extract the density maps simply use the following command.
 	
-	python -m src.ais_manipulation.density.export_density_maps config/config_density.json 
+	python -m src.vesseltrack_tools.density.export_density_maps config/config_density.json 
 
 
 
@@ -144,13 +144,13 @@ Using the cleaned AIS tracks, we are able to generate effective visual represent
 ## Merging AIS files
 Since most applications require a single file for processing, we include a dedicated script that merges the contents of an AIS folder into a single final file. 
 
-	python -m src.ais_manipulation.file_management.merge_files config/config_merge.json
+	python -m src.vesseltrack_tools.file_management.merge_files config/config_merge.json
 
 
 ## Extracting vessel trips
 In order to analyze and better process AIS tracks it is quite useful to know the different trips followed by the vessels. Here we provide a solution for annotating the AIS messages with the appropriate trip identifier. In order to do so, we consider the vessel "stops" based on the reported SPEED, and do not focus solely on port to port voyages. Some thresholds regarding the maximum time gap between the messages, the minimum messages for considering a separate trip and other are defined within the code, and could be altered according to the needs of the user.
 
-	python -m src.ais_manipulation.trips.find_trips config/config_trips.json
+	python -m src.vesseltrack_tools.trips.find_trips config/config_trips.json
 
 So, for example, the result for a single vessel would be the following (with different colors signaling messages from different trips of the same vessel):
 
@@ -161,7 +161,7 @@ So, for example, the result for a single vessel would be the following (with dif
 
 ---
 ### Cleaning Filters (detailed)
-The filters provided by the AIS toolbox include:
+The filters provided by this toolbox include:
 - Removing all messages with empty coordinates, timestamp, speed or course fields.
 - Removing points outside the area of interest (as defined from the configuration file), including points on land. 
 	- We expect a multi-polygon object representing the sea area of interest, in any of the following supported geometry file types: geopackage, geodatabase, geojson.

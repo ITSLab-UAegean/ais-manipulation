@@ -5,7 +5,7 @@ Returns:
 """
 import copy
 import pandas as pd
-from ais_manipulation.density.vessel_type import get_vessel_type_dataframe
+from vesseltrack_tools.density.vessel_type import get_vessel_type_dataframe
 
 
 grid = None
